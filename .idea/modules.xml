@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ToDoListApp.iml" filepath="$PROJECT_DIR$/ToDoListApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/todoAndroid.iml" filepath="$PROJECT_DIR$/todoAndroid.iml" />
     </modules>
   </component>
 </project>
