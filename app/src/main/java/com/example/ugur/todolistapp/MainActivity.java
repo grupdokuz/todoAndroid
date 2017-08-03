@@ -18,7 +18,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-
+import com.pusher.android.*;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,32 +28,79 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.GoogleApiAvailability;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import com.pusher.client.Pusher;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.*;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private String TAG = MainActivity.class.getSimpleName();
     private ListView lv;
 
     ArrayList<HashMap<String, String>> contactList;
+    public static void main(String[] args){
+
+        PusherOptions options = new PusherOptions();
+        options.setCluster("eu");
+        Pusher pusher = new Pusher("764b61bac1147dd219b1", options);
+
+        Channel channel = pusher.subscribe("my-channel");
+
+        channel.bind("my-event", new SubscriptionEventListener() {
+            @Override
+            public void onEvent(String channelName, String eventName, final String data) {
+                System.out.println(data);
+            }
+        });
+
+        pusher.connect();
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (playServicesAvailable()) {
+            //PusherAndroidOptions options = new PusherAndroidOptions().setCluster(<pusher_app_cluster>);
+            //PusherAndroid pusher = new PusherAndroid(<pusher_api_key>);
+            //PushNotificationRegistration nativePusher = pusher.nativePusher();
+            //String defaultSenderId = getString(R.string.gcm_defaultSenderId); // fetched from your google-services.json
+            //nativePusher.registerFCM(this, defaultSenderId);
+        } else {
+            // ... log error, or handle gracefully
+        }
 
         contactList = new ArrayList<>();
         lv = (ListView) findViewById(R.id.list);
 
         new GetContacts().execute();
     }
-
+    private boolean playServicesAvailable() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
     private class GetContacts extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
@@ -132,5 +179,6 @@ public class MainActivity extends AppCompatActivity {
                     new int[]{R.id.id, R.id.title});
             lv.setAdapter(adapter);
         }
+
     }
 }
