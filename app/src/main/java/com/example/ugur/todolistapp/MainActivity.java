@@ -1,8 +1,11 @@
-package com.example.ugur.todolistapp;
+package com;
 import android.util.Log;
 import android.widget.Toast;
 import android.content.Context;
+<<<<<<< HEAD:app/src/main/java/com/example/ugur/todolistapp/MainActivity.java
 import android.support.v7.app.AppCompatActivity;
+=======
+>>>>>>> 83005f88375d1b37e1455ac76641fbeb507667ae:app/src/main/java/com/MainActivity.java
 import android.support.v7.app.*;
 import android.os.Bundle;
 import android.view.View;
@@ -23,15 +26,20 @@ import com.pusher.android.*;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.*;
 import android.util.Log;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+<<<<<<< HEAD:app/src/main/java/com/example/ugur/todolistapp/MainActivity.java
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.GoogleApiAvailability;
+=======
+import com.google.*;
+
+>>>>>>> 83005f88375d1b37e1455ac76641fbeb507667ae:app/src/main/java/com/MainActivity.java
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +51,10 @@ import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.*;
 
+<<<<<<< HEAD:app/src/main/java/com/example/ugur/todolistapp/MainActivity.java
 
+=======
+>>>>>>> 83005f88375d1b37e1455ac76641fbeb507667ae:app/src/main/java/com/MainActivity.java
 public class MainActivity extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private String TAG = MainActivity.class.getSimpleName();
@@ -115,7 +126,11 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... arg0) {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
+<<<<<<< HEAD:app/src/main/java/com/example/ugur/todolistapp/MainActivity.java
             String url = "http://192.168.2.110 :3001/api/todos";
+=======
+            String url = "http://192.168.2.110:3001/api/todos";
+>>>>>>> 83005f88375d1b37e1455ac76641fbeb507667ae:app/src/main/java/com/MainActivity.java
             String jsonStr = sh.makeServiceCall(url);
 
             Log.e(TAG, "Response from url: " + jsonStr);
@@ -182,8 +197,11 @@ public class MainActivity extends AppCompatActivity {
             lv.setAdapter(adapter);
         }
 
+<<<<<<< HEAD:app/src/main/java/com/example/ugur/todolistapp/MainActivity.java
 
 
+=======
+>>>>>>> 83005f88375d1b37e1455ac76641fbeb507667ae:app/src/main/java/com/MainActivity.java
     }
 
 }
