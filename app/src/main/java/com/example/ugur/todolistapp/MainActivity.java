@@ -3,6 +3,7 @@ import android.util.Log;
 import android.widget.Toast;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.*;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -41,6 +42,7 @@ import com.pusher.client.Pusher;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.*;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -113,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... arg0) {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "http://192.168.1.31:3001/api/todos";
+            String url = "http://192.168.2.110 :3001/api/todos";
             String jsonStr = sh.makeServiceCall(url);
 
             Log.e(TAG, "Response from url: " + jsonStr);
@@ -180,5 +182,8 @@ public class MainActivity extends AppCompatActivity {
             lv.setAdapter(adapter);
         }
 
+
+
     }
+
 }
