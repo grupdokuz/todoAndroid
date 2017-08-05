@@ -1,4 +1,4 @@
-package com.example.ugur.todolistapp;
+package com;
 
 import android.util.Log;
 

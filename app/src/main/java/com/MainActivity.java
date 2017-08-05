@@ -1,8 +1,8 @@
-package com.example.ugur.todolistapp;
+package com;
 import android.util.Log;
 import android.widget.Toast;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.*;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,15 +22,14 @@ import com.pusher.android.*;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.*;
 import android.util.Log;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.*;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -113,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... arg0) {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "http://192.168.1.31:3001/api/todos";
+            String url = "http://192.168.2.110:3001/api/todos";
             String jsonStr = sh.makeServiceCall(url);
 
             Log.e(TAG, "Response from url: " + jsonStr);
