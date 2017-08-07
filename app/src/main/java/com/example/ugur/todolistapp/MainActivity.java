@@ -1,6 +1,7 @@
 package com.example.ugur.todolistapp;
 
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Context;
 import android.support.v7.app.*;
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private String TAG = MainActivity.class.getSimpleName();
     private ListView lv;
+    private ArrayList<String> items;
+    private ArrayAdapter<String> itemsAdapter;
+    private ListView lvItems;
 
     ArrayList<HashMap<String, String>> contactList;
     public static void main(String[] args){
@@ -86,9 +90,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         contactList = new ArrayList<>();
-        lv = (ListView) findViewById(R.id.list);
+        //lv = (ListView) findViewById(R.id.list);
+        lvItems = (ListView) findViewById(R.id.lvItems);
+        items = new ArrayList<String>();
+        itemsAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, items);
+        lvItems.setAdapter(itemsAdapter);
 
         new GetContacts().execute();
+    }
+
+    public void onAddItem(View v) {
+        EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
+        String itemText = etNewItem.getText().toString();
+        itemsAdapter.add(itemText);
+        etNewItem.setText("");
     }
     private boolean playServicesAvailable() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
