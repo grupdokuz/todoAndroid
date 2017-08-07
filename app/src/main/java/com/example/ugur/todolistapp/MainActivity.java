@@ -1,6 +1,7 @@
 package com.example.ugur.todolistapp;
 
 import android.util.Log;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ import com.pusher.client.Pusher;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.*;
+import android.widget.AdapterView.OnItemClickListener;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -75,6 +77,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private String[] ulkeler =
+            {"Türkiye", "Almanya", "Avusturya", "Amerika","İngiltere",
+                    "Macaristan", "Yunanistan", "Rusya", "Suriye", "İran", "Irak",
+                    "Şili", "Brezilya", "Japonya", "Portekiz", "İspanya",
+                    "Makedonya", "Ukrayna", "İsviçre"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +110,47 @@ public class MainActivity extends AppCompatActivity {
                 new GetContacts().execute("add todo");
             }
         });
+
+
+
+        final ArrayAdapter<String> veriAdaptoru=new ArrayAdapter<String>
+                (this, android.R.layout.simple_list_item_1, android.R.id.text1, ulkeler);
+        lv.setAdapter(veriAdaptoru);
+
+        lv.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                editLabelText=textLabel.getText().toString();
+                new GetContacts().execute("delete todo");
+
+                AlertDialog.Builder diyalogOlusturucu =
+                        new AlertDialog.Builder(MainActivity.this);
+
+                //diyalogOlusturucu.setMessage(ulkeler[position]);
+
+                String itemId = ""+contactList.get(position);
+                diyalogOlusturucu.setMessage(itemId);
+
+                diyalogOlusturucu.create().show();
+
+            }
+        });
+
+
+
+       /* lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                view.findViewById(R.id.btnDeleteItem).setVisibility(View.VISIBLE);
+                editLabelText=textLabel.getText().toString();
+                new GetContacts().execute("delete todo");
+                lv.getItemAtPosition(position);
+
+                return false;
+            }
+        });*/
 
     }
     private boolean playServicesAvailable() {
@@ -201,12 +251,9 @@ public class MainActivity extends AppCompatActivity {
                 String id=sh.deleteItem(url,editLabelText);
                 HashMap<String, String> contact = new HashMap<>();
 
-                contact.remove(id);
-                // removing contact from contact list
+                contact.remove(id);// removing contact from contact list
                 contactList.remove(contact);
-
-
-            }
+                  }
             return null;
         }
 
