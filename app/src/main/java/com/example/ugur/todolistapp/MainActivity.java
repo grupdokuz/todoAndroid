@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(String... arg0) {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "http://10.4.44.201:3001/api/todos";
+            String url = "http://192.168.1.28:3001/api/todos";
             if(arg0[0].equals("show all")) {
                 String jsonStr = sh.makeServiceCall(url);
 
@@ -196,6 +196,16 @@ public class MainActivity extends AppCompatActivity {
 
                 // adding contact to contact list
                 contactList.add(contact);
+            }
+            else if(arg0[0].equals("delete todo")){
+                String id=sh.deleteItem(url,editLabelText);
+                HashMap<String, String> contact = new HashMap<>();
+
+                contact.remove(id);
+                // removing contact from contact list
+                contactList.remove(contact);
+
+
             }
             return null;
         }

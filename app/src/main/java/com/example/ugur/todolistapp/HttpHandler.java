@@ -93,4 +93,31 @@ public class HttpHandler {
 
         return sb.toString();
     }
+
+    public String deleteItem(String reqUrl, String todoTitle){
+        HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
+        String result="";
+
+        try {
+            HttpPost request = new HttpPost(reqUrl);
+            StringEntity params =new StringEntity("{ \"todo\": { \"title\": \""+todoTitle+"\" } }");
+
+            request.addHeader("content-type", "application/json");
+            request.setEntity(params);
+            HttpResponse response = httpClient.execute(request);
+            result=response.toString();
+            System.out.println(result);
+            result=result.substring(result.indexOf(":3001/todos/")+12,result.indexOf(", Content-Type"));
+
+
+
+        }
+        catch (Exception ex) {
+
+
+        } finally {
+
+        }
+        return result;
+    }
 }
