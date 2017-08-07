@@ -78,11 +78,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private String[] ulkeler =
-            {"Türkiye", "Almanya", "Avusturya", "Amerika","İngiltere",
-                    "Macaristan", "Yunanistan", "Rusya", "Suriye", "İran", "Irak",
-                    "Şili", "Brezilya", "Japonya", "Portekiz", "İspanya",
-                    "Makedonya", "Ukrayna", "İsviçre"};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,9 +109,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        final ArrayAdapter<String> veriAdaptoru=new ArrayAdapter<String>
-                (this, android.R.layout.simple_list_item_1, android.R.id.text1, ulkeler);
-        lv.setAdapter(veriAdaptoru);
+        final ArrayAdapter<String> dataAdapter=new ArrayAdapter<String>
+                (this, android.R.layout.simple_list_item_1, android.R.id.text1);
+        lv.setAdapter(dataAdapter);
 
         lv.setOnItemClickListener(new OnItemClickListener() {
 
@@ -128,11 +124,16 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog.Builder diyalogOlusturucu =
                         new AlertDialog.Builder(MainActivity.this);
 
-                //diyalogOlusturucu.setMessage(ulkeler[position]);
+                String s =""+ contactList.get(position);
+                diyalogOlusturucu.setMessage(s);
+              //  Toast.makeText(MainActivity.this,"Connection is setup",Toast.LENGTH_LONG).show();
+                        /*.setCancelable(false)
+                        .setPositiveButton("Tamam", new OnClickListener() {
 
-                String itemId = ""+contactList.get(position);
-                diyalogOlusturucu.setMessage(itemId);
-
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });*/
                 diyalogOlusturucu.create().show();
 
             }
