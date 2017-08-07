@@ -13,6 +13,12 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
+
 public class HttpHandler {
 
     private static final String TAG = HttpHandler.class.getSimpleName();
@@ -41,6 +47,31 @@ public class HttpHandler {
         return response;
     }
 
+    public String postNewItem(String reqUrl, String todoTitle) {
+
+        HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
+        String ret="";
+        try {
+            HttpPost request = new HttpPost(reqUrl);
+            StringEntity params =new StringEntity("{ \"todo\": { \"title\": \""+todoTitle+"\", \"created_by\": \"enes\" } }");
+            request.addHeader("content-type", "application/json");
+            request.setEntity(params);
+            HttpResponse response = httpClient.execute(request);
+            //handle response here...
+            ret=response.toString();
+            System.out.println(ret);
+            ret=ret.substring(ret.indexOf(":3001/todos/")+12,ret.indexOf(", Content-Type"));
+
+        }catch (Exception ex) {
+            //handle exception here
+
+        } finally {
+            //Deprecated
+            //httpClient.getConnectionManager().shutdown();
+        }
+        return ret;
+    }
+
     private String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
@@ -61,5 +92,32 @@ public class HttpHandler {
         }
 
         return sb.toString();
+    }
+
+    public String deleteItem(String reqUrl, String todoTitle){
+        HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
+        String result="";
+
+        try {
+            HttpPost request = new HttpPost(reqUrl);
+            StringEntity params =new StringEntity("{ \"todo\": { \"title\": \""+todoTitle+"\" } }");
+
+            request.addHeader("content-type", "application/json");
+            request.setEntity(params);
+            HttpResponse response = httpClient.execute(request);
+            result=response.toString();
+            System.out.println(result);
+            result=result.substring(result.indexOf(":3001/todos/")+12,result.indexOf(", Content-Type"));
+
+
+
+        }
+        catch (Exception ex) {
+
+
+        } finally {
+
+        }
+        return result;
     }
 }

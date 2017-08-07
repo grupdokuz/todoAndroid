@@ -1,6 +1,9 @@
 package com.example.ugur.todolistapp;
 
 import android.util.Log;
+
+import android.widget.Button;
+
 import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Context;
@@ -49,14 +52,18 @@ import com.pusher.client.*;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private String TAG = MainActivity.class.getSimpleName();
+    private String TAG = MainActivity.class.getSimpleName(),editLabelText;
     private ListView lv;
+
     private ArrayList<String> items;
     private ArrayAdapter<String> itemsAdapter;
     private ListView lvItems;
 
+    private Button button;
+    private EditText textLabel;
     ArrayList<HashMap<String, String>> contactList;
     public static void main(String[] args){
+
 
         PusherOptions options = new PusherOptions();
         options.setCluster("eu");
@@ -90,14 +97,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         contactList = new ArrayList<>();
-        //lv = (ListView) findViewById(R.id.list);
-        lvItems = (ListView) findViewById(R.id.lvItems);
-        items = new ArrayList<String>();
-        itemsAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, items);
-        lvItems.setAdapter(itemsAdapter);
 
-        new GetContacts().execute();
+        lv = (ListView) findViewById(R.id.lvItems);
+
+        new GetContacts().execute("show all");
+        textLabel=(EditText)findViewById(R.id.etNewItem);
+        button = (Button) findViewById(R.id.btnAddItem);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                editLabelText=textLabel.getText().toString();
+                new GetContacts().execute("add todo");
+            }
+        });
     }
 
     public void onAddItem(View v) {
@@ -121,73 +132,95 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-    private class GetContacts extends AsyncTask<Void, Void, Void> {
+    private class GetContacts extends AsyncTask<String, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Toast.makeText(MainActivity.this,"Json Data is downloading",Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this,"Connection is setup",Toast.LENGTH_LONG).show();
 
         }
 
         @Override
-        protected Void doInBackground(Void... arg0) {
+        protected Void doInBackground(String... arg0) {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "http://192.168.2.110:3001/api/todos";
-            String jsonStr = sh.makeServiceCall(url);
+            String url = "http://192.168.1.28:3001/api/todos";
+            if(arg0[0].equals("show all")) {
+                String jsonStr = sh.makeServiceCall(url);
 
-            Log.e(TAG, "Response from url: " + jsonStr);
-            if (jsonStr != null) {
-                try {
-                    JSONArray deneme = new JSONArray(jsonStr);
+                Log.e(TAG, "Response from url: " + jsonStr);
+                if (jsonStr != null) {
+                    try {
+                        JSONArray deneme = new JSONArray(jsonStr);
 
-                    // Getting JSON Array node
-                    JSONArray contacts = deneme;
+                        // Getting JSON Array node
+                        JSONArray contacts = deneme;
 
-                    // looping through All Contacts
-                    for (int i = 0; i < contacts.length(); i++) {
-                        JSONObject c = contacts.getJSONObject(i);
-                        String id = c.getString("id");
-                        String title = c.getString("title");
+                        // looping through All Contacts
+                        for (int i = 0; i < contacts.length(); i++) {
+                            JSONObject c = contacts.getJSONObject(i);
+                            String id = c.getString("id");
+                            String title = c.getString("title");
 
-                        // Phone node is JSON Object
+                            // Phone node is JSON Object
 
 
-                        // tmp hash map for single contact
-                        HashMap<String, String> contact = new HashMap<>();
+                            // tmp hash map for single contact
+                            HashMap<String, String> contact = new HashMap<>();
 
-                        // adding each child node to HashMap key => value
-                        contact.put("id", id);
-                        contact.put("title", title);
+                            // adding each child node to HashMap key => value
+                            contact.put("id", id);
+                            contact.put("title", title);
 
-                        // adding contact to contact list
-                        contactList.add(contact);
+                            // adding contact to contact list
+                            contactList.add(contact);
+                        }
+                    } catch (final JSONException e) {
+                        Log.e(TAG, "Json parsing error: " + e.getMessage());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(),
+                                        "Json parsing error: " + e.getMessage(),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+
                     }
-                } catch (final JSONException e) {
-                    Log.e(TAG, "Json parsing error: " + e.getMessage());
+
+                } else {
+                    Log.e(TAG, "Couldn't get json from server.");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(),
-                                    "Json parsing error: " + e.getMessage(),
+                                    "Couldn't get json from server. Check LogCat for possible errors!",
                                     Toast.LENGTH_LONG).show();
                         }
                     });
-
                 }
-
-            } else {
-                Log.e(TAG, "Couldn't get json from server.");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Couldn't get json from server. Check LogCat for possible errors!",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
             }
+            else if(arg0[0].equals("add todo")){
+                String id=sh.postNewItem(url,editLabelText);
+                HashMap<String, String> contact = new HashMap<>();
 
+                // adding each child node to HashMap key => value
+                contact.put("id", id);
+                contact.put("title", editLabelText);
+
+                // adding contact to contact list
+                contactList.add(contact);
+            }
+            else if(arg0[0].equals("delete todo")){
+                String id=sh.deleteItem(url,editLabelText);
+                HashMap<String, String> contact = new HashMap<>();
+
+                contact.remove(id);
+                // removing contact from contact list
+                contactList.remove(contact);
+
+
+            }
             return null;
         }
 
