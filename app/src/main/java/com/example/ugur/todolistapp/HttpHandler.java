@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -15,6 +14,7 @@ import java.net.URL;
 
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpDelete;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
@@ -50,19 +50,19 @@ public class HttpHandler {
     public String postNewItem(String reqUrl, String todoTitle) {
 
         HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
-        String ret="";
+        String ret = "";
         try {
             HttpPost request = new HttpPost(reqUrl);
-            StringEntity params =new StringEntity("{ \"todo\": { \"title\": \""+todoTitle+"\", \"created_by\": \"enes\" } }");
+            StringEntity params = new StringEntity("{ \"todo\": { \"title\": \"" + todoTitle + "\", \"created_by\": \"enes\" } }");
             request.addHeader("content-type", "application/json");
             request.setEntity(params);
             HttpResponse response = httpClient.execute(request);
             //handle response here...
-            ret=response.toString();
+            ret = response.toString();
             System.out.println(ret);
-            ret=ret.substring(ret.indexOf(":3001/todos/")+12,ret.indexOf(", Content-Type"));
+            ret = ret.substring(ret.indexOf(":3001/todos/") + 12, ret.indexOf(", Content-Type"));
 
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             //handle exception here
 
         } finally {
@@ -94,27 +94,18 @@ public class HttpHandler {
         return sb.toString();
     }
 
-    public String deleteItem(String reqUrl, String todoTitle){
-                HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
-                String result="";
+    public String deleteItem(String reqUrl, String id) {
+        String result = "";
+        HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
 
-                        try {
-                        HttpPost request = new HttpPost(reqUrl);
-                        StringEntity params =new StringEntity("{ \"todo\": { \"title\": \""+todoTitle+"\" } }");
+        try {
+            HttpDelete request = new HttpDelete(reqUrl + "/" + id);
+            HttpResponse response = httpClient.execute(request);
+            result = response.toString();
+        } catch (Exception ex) {
+        } finally {
 
-                                request.addHeader("content-type", "application/json");
-                        request.setEntity(params);
-                        HttpResponse response = httpClient.execute(request);
-                        result=response.toString();
-                        System.out.println(result);
-                       result=result.substring(result.indexOf(":3001/todos/")+12,result.indexOf(", Content-Type"));
-
-                        }
-                         catch (Exception ex) {
-                         }
-                         finally {
-
-                           }
-               return result;
-          }
+        }
+        return result;
+    }
 }
