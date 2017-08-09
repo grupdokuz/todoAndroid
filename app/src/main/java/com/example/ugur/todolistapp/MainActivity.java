@@ -1,5 +1,6 @@
 package com.example.ugur.todolistapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent i = new Intent(this, RegistrationService.class);
+        startService(i);
         if (playServicesAvailable()) {
             //PusherAndroidOptions options = new PusherAndroidOptions().setCluster(<pusher_app_cluster>);
             //PusherAndroid pusher = new PusherAndroid(<pusher_api_key>);
@@ -146,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(String... arg0) {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "http://10.3.44.73:3001/api/todos";
+            String url = "http://10.3.37.211:3001/api/todos";
             if (arg0[0].equals("show all")) {
                 String jsonStr = sh.makeServiceCall(url);
 
