@@ -47,13 +47,17 @@ public class HttpHandler {
         return response;
     }
 
-    public String postNewItem(String reqUrl, String todoTitle) {
+    public String postNewItem(String reqUrl, String todoTitle,String date) {
 
         HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
         String ret = "";
         try {
             HttpPost request = new HttpPost(reqUrl);
-            StringEntity params = new StringEntity("{ \"todo\": { \"title\": \"" + todoTitle + "\", \"created_by\": \"enes\" } }");
+            StringEntity params;
+            if(date.equals(""))
+                 params = new StringEntity("{ \"todo\": { \"title\": \"" + todoTitle + "\", \"created_by\": \"enes\" } }");
+            else
+                 params = new StringEntity("{ \"todo\": { \"title\": \"" + todoTitle + "\", \"created_by\": \"enes\" ,\"due_date\":\""+date+"\"} }");
             request.addHeader("content-type", "application/json");
             request.setEntity(params);
             HttpResponse response = httpClient.execute(request);

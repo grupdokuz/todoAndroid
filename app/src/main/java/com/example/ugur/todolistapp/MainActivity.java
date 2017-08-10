@@ -1,20 +1,27 @@
 package com.example.ugur.todolistapp;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -28,8 +35,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,10 +47,12 @@ public class MainActivity extends AppCompatActivity {
     String itemId;
     int position;
     ArrayList<HashMap<String, String>> contactList;
-    private String TAG = MainActivity.class.getSimpleName(), editLabelText;
+    private String TAG = MainActivity.class.getSimpleName(), editLabelText,date="";
     private ListView lv;
-    private Button newButton, deleteButton;
+    private Button newButton, deleteButton,calendarButton;
     private EditText textLabel;
+    DatePickerFragment newFragment;
+    TimePickerFragment newFragmentTime;
 
     public static void main(String[] args) {
 
@@ -86,8 +98,28 @@ public class MainActivity extends AppCompatActivity {
         textLabel = (EditText) findViewById(R.id.etNewItem);
         newButton = (Button) findViewById(R.id.btnAddItem);
         deleteButton = (Button) findViewById(R.id.btnDeleteItem);
+
+        calendarButton = (Button) findViewById(R.id.btnCalendar);
+        calendarButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                 newFragment = new DatePickerFragment();
+                newFragment.show(getSupportFragmentManager(), "datePicker");
+                 newFragmentTime = new TimePickerFragment();
+                newFragmentTime.show(getSupportFragmentManager(), "timePicker");
+
+            }
+        });
         newButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                System.out.println(newFragmentTime.hour+":"+newFragmentTime.minute);
+                if(newFragmentTime.hour>12){
+                    date=newFragment.month+" "+newFragment.day+", "+newFragment.year+" "+(newFragmentTime.hour-12)
+                            +":"+newFragmentTime.minute+" PM";}
+                else{
+                    date=newFragment.month+" "+newFragment.day+", "+newFragment.year+" "+newFragmentTime.hour
+                            +":"+newFragmentTime.minute+" AM";
+                }
+                System.out.println(date);
                 editLabelText = textLabel.getText().toString();
                 new GetContacts().execute("add todo");
             }
@@ -137,6 +169,48 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+        int year ;
+        String month ;
+        int day;
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        }
+
+        public void onDateSet(DatePicker view, int year1, int month1, int day1) {
+            // Do something with the date chosen by the user
+            year = view.getYear();
+            month=new DateFormatSymbols(Locale.ENGLISH).getMonths()[view.getMonth()];
+            day = view.getDayOfMonth();
+        }
+    }
+
+    public static class TimePickerFragment extends DialogFragment
+            implements TimePickerDialog.OnTimeSetListener {
+        int hour, minute;
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+                    DateFormat.is24HourFormat(getActivity()));
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute1) {
+            // Do something with the time chosen by the user
+            hour=hourOfDay;
+            minute=minute1;
+        }
+    }
+
     private class GetContacts extends AsyncTask<String, Void, Void> {
         @Override
         protected void onPreExecute() {
@@ -149,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(String... arg0) {
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String url = "http://10.3.37.211:3001/api/todos";
+            String url = "http://10.4.43.130:3001/api/todos";
             if (arg0[0].equals("show all")) {
                 String jsonStr = sh.makeServiceCall(url);
 
@@ -205,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             } else if (arg0[0].equals("add todo")) {
-                String id = sh.postNewItem(url, editLabelText);
+                String id = sh.postNewItem(url, editLabelText,date);
                 HashMap<String, String> contact = new HashMap<>();
 
                 // adding each child node to HashMap key => value
